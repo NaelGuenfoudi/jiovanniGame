@@ -361,6 +361,21 @@ h1.game-title {
   cursor: not-allowed;
 }
 
+.action-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.cards-remaining {
+  color: rgba(255,255,255,0.4);
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
 /* Résolution du tour (Carnet de notes crade) */
 .resolution-panel {
   margin-top: 20px;
@@ -405,45 +420,150 @@ h1.game-title {
 }
 .resolution-panel li:last-child { border: none; }
 
-/* Mobile Responsive */
+/* Mobile Responsive - True App Layout */
 @media (max-width: 900px) {
-  .poker-table {
-    width: 98%;
-    height: 70vh;
-    border-radius: 20px;
-    border-width: 12px;
+  body {
+    overflow: hidden; /* Empêcher le scroll de la page entière */
   }
+
+  .app-container {
+    height: 100dvh;
+    padding: 10px 5px 5px 5px;
+    justify-content: flex-start;
+  }
+
+  /* Joueurs en haut très compacts */
+  .mobile-players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 5px;
+    flex-shrink: 0;
+  }
+
   .player-node {
-    transform: translate(0, 0);
+    transform: none;
     position: relative;
     top: auto !important; left: auto !important;
-    margin: 5px;
+    margin: 0;
+    padding: 6px 8px;
     --rot: 0deg !important;
-    padding: 8px 10px;
+    min-width: 0;
   }
+
+  .player-name {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .player-score { font-size: 1rem; }
+  .btn-score { width: 22px; height: 22px; font-size: 0.9rem; }
+  .role-badge { font-size: 0.65rem; padding: 2px 5px; top: -8px; right: -5px; }
+
+  /* La Table devient le conteneur principal vertical */
   .poker-table-container {
-    flex-direction: column;
-    height: auto;
-    margin: 10px 0;
-  }
-  .mobile-players-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex: 1;
     width: 100%;
-    margin-bottom: 10px;
-    z-index: 100;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Important pour flex */
   }
+
+  .poker-table {
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    border-width: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px 10px;
+  }
+
+  .game-title {
+    display: none; /* Titre caché sur mobile pour gagner de la place */
+  }
+
+  .center-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto; /* Scroll interne si vraiment nécessaire */
+    padding-bottom: 10px;
+    width: 100%;
+  }
+
+  /* Cartes qui se chevauchent */
+  .cards-display {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 5px;
+    padding: 10px 0;
+  }
+
+  .card-container {
+    width: 75px;
+    height: 110px;
+    margin-left: -20px; /* Chevauchement */
+  }
+  .card-container:first-child { margin-left: 0; }
+  .card-container:nth-child(2n) { transform: rotate(3deg) translateY(4px); }
+  .card-container:nth-child(3n) { transform: rotate(-3deg) translateY(-2px); }
+
+  .card-front .value { font-size: 2.2rem; }
+  .card-front .suit { font-size: 1.5rem; }
+  .player-name-card { font-size: 0.75rem; bottom: 4px; }
+  .card-back::after { font-size: 2.5rem; }
+
+  /* Douloureuse (Notification compacte sous les cartes) */
   .resolution-panel {
     margin-top: 10px;
     padding: 12px 15px;
-    width: 95%;
+    width: 100%;
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
   }
+  
+  .resolution-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+  }
+  
   .resolution-panel li {
-    font-size: 0.95rem;
-    padding: 8px 0;
+    font-size: 0.9rem;
+    padding: 6px 0;
   }
-  .game-title {
-    font-size: 1.8rem;
+
+  /* Action Bar (Toujours visible en bas de la table) */
+  .action-bar {
+    margin-top: auto;
+    padding-top: 10px;
+    width: 100%;
+    border-top: 1px dashed rgba(0,0,0,0.3);
+  }
+
+  .action-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.4rem;
+    border-radius: 15px;
+    box-sizing: border-box;
+  }
+
+  .cards-remaining {
+    font-size: 0.8rem;
+    margin-top: 5px;
   }
 }

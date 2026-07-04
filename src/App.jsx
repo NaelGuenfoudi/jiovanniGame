@@ -265,19 +265,15 @@ function App() {
               </div>
             )}
 
-            {/* On cache le bouton Piocher tant qu'on a pas tout révélé pour obliger à finir */}
+            {/* Bouton d'action et compteur */}
             {(!isDrawing || currentCards.length === 0) && (
-              <button 
-                className="action-button" 
-                onClick={drawTurn} 
-              >
-                PIOCHER
-              </button>
-            )}
-
-            {(!isDrawing || currentCards.length === 0) && (
-              <div style={{ color: 'rgba(255,255,255,0.3)', marginTop: '10px', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                {deck.length} RESTANTES
+              <div className="action-bar">
+                <button className="action-button" onClick={drawTurn}>
+                  PIOCHER
+                </button>
+                <div className="cards-remaining">
+                  {deck.length} CARTES RESTANTES
+                </div>
               </div>
             )}
           </div>
