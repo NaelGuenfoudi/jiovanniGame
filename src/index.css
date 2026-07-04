@@ -396,18 +396,22 @@ h1.game-title {
 }
 
 .resolution-panel li {
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  font-weight: bold;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.4;
+  text-align: left;
 }
 .resolution-panel li:last-child { border: none; }
 
 /* Mobile Responsive */
 @media (max-width: 900px) {
   .poker-table {
-    width: 95%;
-    height: 75vh;
+    width: 98%;
+    height: 70vh;
     border-radius: 20px;
+    border-width: 12px;
   }
   .player-node {
     transform: translate(0, 0);
@@ -415,17 +419,31 @@ h1.game-title {
     top: auto !important; left: auto !important;
     margin: 5px;
     --rot: 0deg !important;
+    padding: 8px 10px;
   }
   .poker-table-container {
     flex-direction: column;
     height: auto;
+    margin: 10px 0;
   }
   .mobile-players-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     z-index: 100;
+  }
+  .resolution-panel {
+    margin-top: 10px;
+    padding: 12px 15px;
+    width: 95%;
+  }
+  .resolution-panel li {
+    font-size: 0.95rem;
+    padding: 8px 0;
+  }
+  .game-title {
+    font-size: 1.8rem;
   }
 }

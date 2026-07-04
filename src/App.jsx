@@ -116,12 +116,12 @@ function App() {
     });
 
     minPlayers.forEach(p => sipsToGive[p] += 1);
-    rules.push(`👇 Zéro chance pour ${minPlayers.join(', ')} (petite carte). Prends ta gorgée.`);
+    rules.push(`👇 ${minPlayers.join(', ')} : +1 🍺 (Plus petite carte)`);
 
     Object.entries(valuesCount).forEach(([val, count]) => {
       if (count >= 2) {
         const gorgées = currentPlayersState.length === 2 ? 2 : 1;
-        rules.push(`👯 Doublon sur le ${val} ! Ceux qui ne l'ont pas se mangent ${gorgées} gorgée(s).`);
+        rules.push(`👯 Doublon ${val} ! Les autres : +${gorgées} 🍺`);
         drawnCards.forEach(({ player, card }) => {
           if (card.value !== val) {
             sipsToGive[player] += gorgées;
@@ -133,19 +133,19 @@ function App() {
     drawnCards.forEach(({ player, card, playerIndex }) => {
       if (card.value === 'V') {
         if (currentBitch) {
-          rules.push(`🛑 Fini de souffrir pour ${currentBitch}, tu n'es plus la salope !`);
+          rules.push(`🛑 ${currentBitch} est libéré(e) !`);
         }
         currentBitch = player;
         const masterIndex = (playerIndex - 1 + currentPlayersState.length) % currentPlayersState.length;
         currentMaster = currentPlayersState[masterIndex].name;
-        rules.push(`🃏 ${player} tire le Valet et devient la salope de ${currentMaster}.`);
+        rules.push(`🃏 ${player} devient la salope de ${currentMaster}`);
       }
       if (card.value === 'R' || card.value === 'D') {
-        rules.push(`👑 ${player} a tiré un(e) ${card.value}. Si c'est ton genre : distribue 1 gorgée à tout le monde. Si c'est pas ton genre : tu bois comme un poivrot ! (Bonus humour : si t'es une femme, un vêtement en moins 👗)`);
+        rules.push(`👑 ${player} (${card.value}) : Ton genre = Distribue 1 🍺/pers. Pas ton genre = Bois sec ! 👗(Femme = 1 vêtement)`);
       }
       if (card.value === 'A') {
         const asSips = currentPlayersState.length;
-        rules.push(`🔥 RAGEBAIT ! ${player} prend l'As : ${asSips} gorgées directes !`);
+        rules.push(`🔥 AS RAGEBAIT ! ${player} prend +${asSips} 🍺 direct`);
         sipsToGive[player] += asSips;
       }
     });
@@ -153,7 +153,7 @@ function App() {
     if (currentBitch && currentMaster && sipsToGive[currentMaster] > 0) {
       const mirrorSips = sipsToGive[currentMaster];
       sipsToGive[currentBitch] += mirrorSips;
-      rules.push(`🔗 Miroir : ${currentMaster} trinque, ${currentBitch} l'accompagne pour ${mirrorSips} gorgée(s).`);
+      rules.push(`🔗 Miroir : ${currentBitch} boit +${mirrorSips} 🍺 avec son maître`);
     }
 
     setValetBitch(currentBitch);
