@@ -16,11 +16,10 @@ function App() {
   const [valetBitch, setValetBitch] = useState(null);
   const [valetMaster, setValetMaster] = useState(null);
 
-  // Pour le suspense au clic
   const [revealedCardIndexes, setRevealedCardIndexes] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
-
-  // Plus de useEffect problématique ici !
+  const [isDouloureuseExpanded, setIsDouloureuseExpanded] = useState(false);
+  const [showRulesModal, setShowRulesModal] = useState(false);
 
   const addPlayer = (e) => {
     e.preventDefault();
@@ -63,6 +62,7 @@ function App() {
     setActiveRules([]);
     setRevealedCardIndexes([]);
     setIsDrawing(true);
+    setIsDouloureuseExpanded(false);
 
     const drawnCards = [];
     const tempDeck = [...deck];
@@ -81,11 +81,8 @@ function App() {
       const newRevealed = [...revealedCardIndexes, index];
       setRevealedCardIndexes(newRevealed);
       
-      // Si on vient de cliquer sur la toute dernière carte
       if (newRevealed.length === currentCards.length) {
         setTimeout(() => {
-          // On passe currentPlayersState depuis le hook en utilisant une fonction dans setPlayers si besoin, 
-          // mais on va appeler analyzeRules avec les state actuels
           setIsDrawing(false);
           analyzeRules(currentCards, players);
         }, 500);
@@ -171,9 +168,31 @@ function App() {
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 900;
 
-  if (!gameStarted) {
-    return (
-      <div className="app-container">
+  return (
+    <div className="app-container">
+      <button className="btn-rules-trigger" onClick={() => setShowRulesModal(true)}>📖</button>
+
+      {showRulesModal && (
+        <div className="rules-modal-overlay" onClick={() => setShowRulesModal(false)}>
+          <div className="rules-modal-content" onClick={e => e.stopPropagation()}>
+            <button className="close-modal" onClick={() => setShowRulesModal(false)}>X</button>
+            <h2>📖 Règles du Jiovani Game</h2>
+            <ul>
+              <li><strong>Plus petite carte :</strong> 1 gorgée pour le ou les perdants.</li>
+              <li><strong>Doublon :</strong> Ceux qui n'ont PAS le doublon prennent 1 gorgée (ou 2 s'il n'y a que 2 joueurs).</li>
+              <li><strong>Valet :</strong> Le joueur devient la "salope" du joueur à sa gauche. Il boit chaque fois que son maître boit, jusqu'au prochain Valet.</li>
+              <li><strong>Roi / Dame :</strong> 
+                <br/>- <em>Si c'est ton genre :</em> Distribue 1 gorgée à chaque joueur.
+                <br/>- <em>Si ce n'est pas ton genre :</em> Tu bois sec ! (Bonus : si tu es une femme, tu enlèves un vêtement).
+              </li>
+              <li><strong>As (Ragebait) :</strong> Le joueur prend instantanément autant de gorgées qu'il y a de joueurs à la table !</li>
+              <li><strong>Fin du deck :</strong> Ceux qui n'ont pas fini leur verre le finissent cul sec.</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {!gameStarted ? (
         <div className="setup-screen">
           <h2>🍺 Jiovanni Game 🍺</h2>
           <form onSubmit={addPlayer}>
@@ -199,101 +218,107 @@ function App() {
             </button>
           )}
         </div>
-      </div>
-    );
-  }
-
-  const renderPlayers = () => {
-    return players.map((p, i) => {
-      const posClass = !isMobile ? `player-pos-${i % 6}` : '';
-      return (
-        <div key={i} className={`player-node ${posClass}`}>
-          {valetBitch === p.name && <div className="role-badge">🔗 Salope</div>}
-          <div className="player-name">{p.name}</div>
-          <div className="player-score">
-            🍺 {p.totalSips} {p.turnSips > 0 && <span style={{color: '#ff5252', fontSize: '0.9rem', marginLeft: '5px'}}>+{p.turnSips}</span>}
-          </div>
-          <div className="player-controls">
-            <button className="btn-score" onClick={() => adjustSips(p.name, -1)}>-</button>
-            <button className="btn-score" onClick={() => adjustSips(p.name, 1)}>+</button>
-          </div>
-        </div>
-      );
-    });
-  };
-
-  return (
-    <div className="app-container">
-      {isMobile && (
-        <div className="mobile-players-grid">
-          {renderPlayers()}
-        </div>
-      )}
-
-      <div className="poker-table-container">
-        <div className="poker-table">
-          <h1 className="game-title">Jiovani</h1>
-          
-          {!isMobile && renderPlayers()}
-
-          <div className="center-stage">
-            {currentCards.length > 0 && (
-              <div className="cards-display">
-                {currentCards.map(({ player, card }, index) => {
-                  const isRevealed = revealedCardIndexes.includes(index);
-
-                  return (
-                    <div 
-                      key={index} 
-                      className={`card-container ${isRevealed ? 'revealed' : ''}`}
-                      onClick={() => revealCard(index)}
-                    >
-                      <div className="card-inner">
-                        {/* DOS DE LA CARTE */}
-                        <div className="card-face card-back"></div>
-                        
-                        {/* FACE DE LA CARTE */}
-                        <div className={`card-face card-front ${card.isRed ? 'red' : 'black'}`}>
-                          <div className="player-name-card">{player}</div>
-                          <div className="value">{card.value}</div>
-                          <div className="suit">{card.suit}</div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Bouton d'action et compteur */}
-            {(!isDrawing || currentCards.length === 0) && (
-              <div className="action-bar">
-                <button className="action-button" onClick={drawTurn}>
-                  PIOCHER
-                </button>
-                <div className="cards-remaining">
-                  {deck.length} CARTES RESTANTES
+      ) : (
+        <>
+          {isMobile && (
+            <div className="mobile-players-grid">
+              {players.map((p, i) => (
+                <div key={i} className="player-node">
+                  {valetBitch === p.name && <div className="role-badge">🔗 Salope</div>}
+                  <div className="player-name">{p.name}</div>
+                  <div className="player-score">
+                    🍺 {p.totalSips} {p.turnSips > 0 && <span style={{color: '#ff5252', fontSize: '0.9rem', marginLeft: '5px'}}>+{p.turnSips}</span>}
+                  </div>
+                  <div className="player-controls">
+                    <button className="btn-score" onClick={() => adjustSips(p.name, -1)}>-</button>
+                    <button className="btn-score" onClick={() => adjustSips(p.name, 1)}>+</button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Résolution du tour affichée sous les cartes, pas en popup */}
-          {!isDrawing && activeRules.length > 0 && (
-            <div className="resolution-panel">
-              <h3>La Douloureuse</h3>
-              <ul>
-                {activeRules.map((rule, index) => (
-                  <li key={index}>{rule}</li>
-                ))}
-              </ul>
+              ))}
             </div>
           )}
 
-        </div>
-      </div>
+          <div className="poker-table-container">
+            <div className="poker-table">
+              <h1 className="game-title">Jiovani</h1>
+              
+              {!isMobile && players.map((p, i) => {
+                const posClass = `player-pos-${i % 6}`;
+                return (
+                  <div key={i} className={`player-node ${posClass}`}>
+                    {valetBitch === p.name && <div className="role-badge">🔗 Salope</div>}
+                    <div className="player-name">{p.name}</div>
+                    <div className="player-score">
+                      🍺 {p.totalSips} {p.turnSips > 0 && <span style={{color: '#ff5252', fontSize: '0.9rem', marginLeft: '5px'}}>+{p.turnSips}</span>}
+                    </div>
+                    <div className="player-controls">
+                      <button className="btn-score" onClick={() => adjustSips(p.name, -1)}>-</button>
+                      <button className="btn-score" onClick={() => adjustSips(p.name, 1)}>+</button>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div className="center-stage">
+                {currentCards.length > 0 && (
+                  <div className="cards-display">
+                    {currentCards.map(({ player, card }, index) => {
+                      const isRevealed = revealedCardIndexes.includes(index);
+
+                      return (
+                        <div 
+                          key={index} 
+                          className={`card-container ${isRevealed ? 'revealed' : ''}`}
+                          onClick={() => revealCard(index)}
+                        >
+                          <div className="card-inner">
+                            <div className="card-face card-back"></div>
+                            <div className={`card-face card-front ${card.isRed ? 'red' : 'black'}`}>
+                              <div className="player-name-card">{player}</div>
+                              <div className="value">{card.value}</div>
+                              <div className="suit">{card.suit}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Résolution du tour affichée sous les cartes, rétractable */}
+                {!isDrawing && activeRules.length > 0 && (
+                  <div className="resolution-panel">
+                    <h3 onClick={() => setIsDouloureuseExpanded(!isDouloureuseExpanded)} className="douloureuse-header">
+                      <span>La Douloureuse</span>
+                      <span className="toggle-icon">{isDouloureuseExpanded ? '▲' : '▼'}</span>
+                    </h3>
+                    {isDouloureuseExpanded && (
+                      <ul>
+                        {activeRules.map((rule, index) => (
+                          <li key={index}>{rule}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
+                {/* Bouton d'action et compteur */}
+                {(!isDrawing || currentCards.length === 0) && (
+                  <div className="action-bar">
+                    <button className="action-button" onClick={drawTurn}>
+                      PIOCHER
+                    </button>
+                    <div className="cards-remaining">
+                      {deck.length} CARTES RESTANTES
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
-
 export default App;

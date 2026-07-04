@@ -376,6 +376,77 @@ h1.game-title {
   font-weight: bold;
 }
 
+/* Modal Règles */
+.btn-rules-trigger {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #3e2723;
+  color: #d7ccc8;
+  border: 1px dashed var(--neon-yellow);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 200;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rules-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.rules-modal-content {
+  background: var(--paper-bg);
+  color: var(--text-dark);
+  padding: 20px 30px;
+  border-radius: 12px;
+  border: 2px solid #8d6e63;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+}
+
+.rules-modal-content h2 {
+  color: #b71c1c;
+  margin-top: 0;
+  text-align: center;
+  border-bottom: 2px dashed #8d6e63;
+  padding-bottom: 10px;
+}
+
+.rules-modal-content ul {
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.rules-modal-content li {
+  margin-bottom: 10px;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px; right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #b71c1c;
+  cursor: pointer;
+}
+
 /* Résolution du tour (Carnet de notes crade) */
 .resolution-panel {
   margin-top: 20px;
@@ -390,18 +461,32 @@ h1.game-title {
   animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes popUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.resolution-panel h3 {
+.douloureuse-header {
   color: #b71c1c;
-  margin-top: 0;
+  margin: 0;
   text-align: center;
   text-transform: uppercase;
   border-bottom: 2px dashed #8d6e63;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.douloureuse-header:active {
+  opacity: 0.7;
+}
+
+.toggle-icon {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+@keyframes popUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .resolution-panel ul {
