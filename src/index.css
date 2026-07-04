@@ -1,0 +1,431 @@
+:root {
+  --table-base: #2f4f37; /* Vert kaki/mousse passé (plus clair) */
+  --table-highlight: #426b4d; /* Kaki plus vif pour contraster */
+  --stain-color: rgba(0, 0, 0, 0.4);
+  --neon-yellow: #d4a017;
+  --neon-red: #c92a2a;
+  --paper-bg: #d7ccc8;
+  --text-dark: #2b1f1a;
+  --text-light: #e0e0e0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0a0a0a;
+  color: var(--text-light);
+  font-family: 'Courier New', Courier, monospace, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+h1.game-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--neon-yellow);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  text-shadow: 0 0 10px rgba(212, 160, 23, 0.5), 0 0 20px rgba(212, 160, 23, 0.3);
+  opacity: 0.3;
+}
+
+/* Formulaire */
+.setup-screen {
+  background: repeating-linear-gradient(45deg, #1f1a18, #1f1a18 10px, #1a1514 10px, #1a1514 20px);
+  padding: 40px;
+  border-radius: 12px;
+  border: 3px solid #3e2723;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  margin: auto;
+}
+
+.setup-screen h2 {
+  color: var(--neon-yellow);
+  margin-top: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 5px rgba(212, 160, 23, 0.8);
+}
+
+.input {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: rgba(0,0,0,0.7);
+  border: 1px dashed #5d4037;
+  color: var(--neon-yellow);
+  font-size: 1.2rem;
+  font-family: 'Courier New', Courier, monospace;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--neon-red);
+}
+
+.player-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.player-tag {
+  background: var(--paper-bg);
+  color: var(--text-dark);
+  padding: 8px 16px;
+  font-weight: bold;
+  transform: rotate(-2deg);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+}
+
+/* La Table (Bar Miteux) */
+.poker-table-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+}
+
+.poker-table {
+  position: relative;
+  width: 95%;
+  height: 75vh;
+  min-height: 500px;
+  /* Texture bois sale */
+  background: 
+    radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%),
+    repeating-linear-gradient(90deg, var(--table-base), var(--table-base) 10px, var(--table-highlight) 10px, var(--table-highlight) 20px);
+  border-radius: 40%;
+  border: 18px solid #4e342e; /* Bois légèrement plus clair et cuivré pour contraster */
+  box-shadow: 
+    inset 0 0 0 3px rgba(255, 255, 255, 0.07), /* Reflet de lumière sur le bord intérieur */
+    inset 0 0 80px rgba(0,0,0,0.7), /* Ombre interne adoucie sur les bords */
+    inset 20px 20px 50px var(--stain-color), /* Tache d'alcool */
+    0 0 0 6px #1a1210, /* Contour extérieur très sombre pour détacher la table du fond */
+    0 20px 50px rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Sous-bocks (Joueurs) */
+.player-node {
+  position: absolute;
+  background: var(--paper-bg);
+  color: var(--text-dark);
+  padding: 10px 15px;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 3px 5px 10px rgba(0,0,0,0.6), inset 0 0 20px rgba(139, 69, 19, 0.2);
+  z-index: 20;
+  transform: translate(-50%, -50%) rotate(calc(var(--rot, 0deg)));
+  border-radius: 10px;
+  /* Taches sur le sous-bock */
+  background-image: radial-gradient(circle at 80% 20%, rgba(93, 64, 55, 0.2) 10%, transparent 11%);
+}
+
+.player-pos-0 { top: 92%; left: 50%; --rot: 2deg; }
+.player-pos-1 { top: 15%; left: 15%; --rot: -4deg; }
+.player-pos-2 { top: 15%; left: 85%; --rot: 3deg; }
+.player-pos-3 { top: 50%; left: 5%; --rot: -2deg; }
+.player-pos-4 { top: 50%; left: 95%; --rot: 5deg; }
+.player-pos-5 { top: 5%; left: 50%; --rot: -1deg; }
+
+.player-name {
+  font-weight: 900;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  border-bottom: 2px solid #5d4037;
+  padding-bottom: 2px;
+}
+
+.player-score {
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: #b71c1c;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.player-controls {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.btn-score {
+  background: #3e2723;
+  color: var(--paper-bg);
+  border: none;
+  width: 25px; height: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: monospace;
+}
+.btn-score:hover { background: #b71c1c; }
+
+.role-badge {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  background: var(--neon-red);
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  font-weight: bold;
+  transform: rotate(10deg);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Zone Centrale : Cartes */
+.center-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  width: 100%;
+}
+
+.cards-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+/* Animations Flip */
+.card-container {
+  perspective: 1000px;
+  width: 100px;
+  height: 150px;
+  cursor: pointer; /* Indique qu'on peut cliquer */
+  transition: transform 0.2s;
+}
+
+.card-container:hover {
+  transform: translateY(-5px);
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.card-container.revealed .card-inner {
+  transform: rotateY(180deg);
+  cursor: default;
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.6);
+  border: 1px solid #777;
+}
+
+/* Dos de la carte (Glauque) */
+.card-back {
+  background: #1a1a1a;
+  background-image: radial-gradient(circle at center, #333 0%, #111 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #444;
+}
+
+.card-back::after {
+  content: '?';
+  color: #666;
+  font-weight: 900;
+  font-size: 3rem;
+  font-family: serif;
+}
+
+/* Face de la carte */
+.card-front {
+  background: #f5f5f5;
+  color: #111;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Légèrement sale */
+  box-shadow: inset 0 0 20px rgba(139, 69, 19, 0.1);
+}
+
+.card-front .value {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.card-front .suit {
+  font-size: 2rem;
+  margin-top: 0px;
+}
+
+.card-front.red { color: #b71c1c; }
+.card-front.black { color: #111; }
+
+.player-name-card {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.8);
+}
+
+/* Bouton d'action (Enseigne Néon cassée) */
+.action-button {
+  background: transparent;
+  border: 3px solid var(--neon-red);
+  color: var(--neon-red);
+  font-size: 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 900;
+  padding: 15px 40px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(201, 42, 42, 0.3), inset 0 0 10px rgba(201, 42, 42, 0.3);
+  transition: all 0.1s;
+  text-shadow: 0 0 5px var(--neon-red);
+}
+
+.action-button:hover:not(:disabled) {
+  background: rgba(201, 42, 42, 0.1);
+  box-shadow: 0 0 20px rgba(201, 42, 42, 0.6), inset 0 0 15px rgba(201, 42, 42, 0.6);
+}
+
+.action-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.action-button:disabled {
+  border-color: #555;
+  color: #555;
+  box-shadow: none;
+  text-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Résolution du tour (Carnet de notes crade) */
+.resolution-panel {
+  margin-top: 20px;
+  background: var(--paper-bg);
+  color: var(--text-dark);
+  border: 1px solid #8d6e63;
+  padding: 15px 25px;
+  box-shadow: 5px 10px 30px rgba(0,0,0,0.9);
+  z-index: 50;
+  width: 90%;
+  max-width: 500px;
+  animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.resolution-panel h3 {
+  color: #b71c1c;
+  margin-top: 0;
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 2px dashed #8d6e63;
+  padding-bottom: 10px;
+}
+
+.resolution-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resolution-panel li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  font-weight: bold;
+}
+.resolution-panel li:last-child { border: none; }
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .poker-table {
+    width: 95%;
+    height: 75vh;
+    border-radius: 20px;
+  }
+  .player-node {
+    transform: translate(0, 0);
+    position: relative;
+    top: auto !important; left: auto !important;
+    margin: 5px;
+    --rot: 0deg !important;
+  }
+  .poker-table-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .mobile-players-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 20px;
+    z-index: 100;
+  }
+}
